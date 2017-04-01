@@ -39,7 +39,6 @@ class device_handler(debounce_handler):
     login_header = {'User-Agent': 'Mozilla/5.0', 'Content-Type': 'application/json'}
     form_login = '{"form": true, "login": "'+username+'", "password": "'+password+'", "keepme": false, "default_ui": 1}'
 
-    #s = requests.Session()
     s.post(login_url,headers=login_header, data=form_login)
 
     r = s.get(devices_url)
@@ -50,17 +49,10 @@ class device_handler(debounce_handler):
         if 'alexa' in device['tags']:
             devices.append(device)
 
-    #print json.dumps(devices, sort_keys=True, indent=4, separators=(',', ': '))
-
-    temp_id = devices[1]['id']
-    url = server + '/ZAutomation/api/v1/devices/' + temp_id + '/command/'
-    r = s.get(url + 'on')
+    devices.sort()
 
 
     def act(self, client_address, state, name):
-
-        # loop through all the devices here and check if in name
-
         for device in devices :
             if device['metrics']['title'] == name :
                 if state == True:
@@ -70,13 +62,8 @@ class device_handler(debounce_handler):
 
                 print r.status_code
 
-
-
-
         print "State", state, "on ", name, "from client @", client_address
         return True
-
-
 
 
 if __name__ == "__main__":
